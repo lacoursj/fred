@@ -1,0 +1,2 @@
+# fred
+LLM consciousness experiments
