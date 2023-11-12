@@ -6,3 +6,10 @@ consciousness: https://medium.com/@jeffatjeffdotnet/a-model-for-consciousness-pa
 
 Jeff LaCoursiere
 jeff@stratustalk.com
+
+=========-----------------------------------------============
+
+v1.1 - stubs
+    * you can run with "python fred.py [-n <# iterations>]"
+    * suggest -n 1 or you get exponential output :)
+
