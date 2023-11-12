@@ -7,7 +7,7 @@ consciousness: https://medium.com/@jeffatjeffdotnet/a-model-for-consciousness-pa
 Jeff LaCoursiere
 jeff@stratustalk.com
 
-...
+```
 =========-----------------------------------------============
 
 v1.1 - stubs
@@ -24,4 +24,4 @@ v1.2 - sequential llm calls
     for easy analysis an tweaking.
 
     * you can run with "python fred.py [-n <# iterations>]"
-...
+```
