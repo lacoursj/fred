@@ -3,16 +3,41 @@
 #     column-like personalities that make up a consciousness.
 #
 # v1.1 - stubs
+# v1.2 - initial llm calls
 #
+from llama_cpp import Llama
+
+MODEL_TINY = "../models/orca_mini_v3_7b.Q6_K.gguf"
+
 class Analytical_Arthur:
     def analyze_input(self, prompt):
-        # TODO: Implement logic
-        return "Analytical output based on: " + prompt
+        llm = LLM()
+        personality = "You are Analytical Arthur, an expert at analyzing the details of a prompt."
+        question1 = "Given the following prompt, generate a question you might ask yourself to generate more detail, or say 'no comment': " + prompt
+        output1 = llm.query(personality + question1, MODEL_TINY)
+        print("    AA:" + output1)
+        if output1.strip().lower() == "no comment":
+            output2 = output1
+        else:
+            question2 = output1
+            output2 = llm.query(personality + question2, MODEL_TINY)
+            print("    AA:" + output2)
+        return "Analytical output based on: " + prompt + " : " + output2
 
 class Curious_Caroline:
     def explore_input(self, prompt):
-        # TODO: Implement logic
-        return "Exploratory output based on: " + prompt
+        llm = LLM()
+        personality = "You are Curious Caroline, an expert at understanding how things work and how they might be used."
+        question1 = "Given the following prompt, generate a question you might ask yourself to satisfy curiosity, or say 'no comment': " + prompt
+        output1 = llm.query(personality + question1, MODEL_TINY)
+        print("    CC:" + output1)
+        if output1.strip().lower() == "no comment":
+            output2 = output1
+        else:
+            question2 = output1
+            output2 = llm.query(personality + question2, MODEL_TINY)
+            print("    CC:" + output2)
+        return "Exploratory output based on: " + prompt + " : " + output2
 
 class Empathetic_Emma:
     def consider_input(self, prompt):
@@ -66,6 +91,25 @@ class Realistic_Rachael:
 
 class LLM:
     def summarize(self, columns_output):
-        # TODO: Implement summarization logic
-        summarized_output = " | ".join(columns_output)
-        return summarized_output
+        #
+        # summarize() is meant to evaluate the output of all
+        # cortical column routines, forming the next thought
+        #
+        llm = Llama(model_path="../models/orca_mini_v3_7b.Q6_K.gguf", verbose=False, n_threads=6)
+        #llm = Llama(model_path="../models/llama-2-7b-chat.Q5_K_S.gguf", verbose=False)
+        prompt = "Summarize the following opinions into one thought in one sentence."
+        colout_str = " | ".join(columns_output)
+        new_prompt = "### System: You are an AI assistant that follows instruction extremely well. Help as much as you can. ### User: " + prompt + " ### Input: " + colout_str + " ### Response: "
+
+        output = llm(new_prompt, max_tokens=64, stop=["### System:", "\n"], echo=False)
+        return output['choices'][0]['text']
+
+    def query(self, prompt, model):
+        #
+        # query() is for sending a prompt to a model
+        #
+        llm = Llama(model_path=model, verbose=False, n_threads=6)
+        new_prompt = "### System: You are an AI assistant that follows instruction extremely well. Help as much as you can. ### User: " + prompt + "### Input: ### Response: "
+        output = llm(new_prompt, max_tokens=64, stop=["### System:", "\n"], echo=False)
+        response_text = output['choices'][0]['text']
+        return(response_text)

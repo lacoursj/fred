@@ -11,11 +11,21 @@ parser = argparse.ArgumentParser(description="Run the simulation.")
 parser.add_argument("-n", type=int, default=-1, help="Number of iterations to run")
 args = parser.parse_args()
 
-
 def main():
     # if only this easy
     alive = True
     iteration_count = 0
+
+    print("")
+    print("╭━━━╮╱╱╱╱╱╱╭╮")
+    print("┃╭━━╯╱╱╱╱╱╱┃┃")
+    print("┃╰━━┳━┳━━┳━╯┃")
+    print("┃╭━━┫╭┫┃━┫╭╮┃")
+    print("┃┃╱╱┃┃┃┃━┫╰╯┃")
+    print("╰╯╱╱╰╯╰━━┻━━╯")
+    print("")
+    print("11/2023 J LaCoursiere")
+    print("")
 
     # Instantiate column classes
     analytical_arthur = Analytical_Arthur()
@@ -35,7 +45,8 @@ def main():
     llm = LLM()
 
     # Initial prompt
-    prompt = "Initial thought to start the dialogue."
+    prompt = "Should we worry about AI?"
+    print("I shall begin my journey considering: " + prompt)
 
     while alive:  # Forever loop?
         # List to collect outputs from each column
@@ -59,7 +70,7 @@ def main():
         next_internal_thought = llm.summarize(columns_output)
 
         # Print the next internal thought (or pass it to a chat interface)
-        print(next_internal_thought)
+        print("THOUGHT:" + next_internal_thought)
 
         # Set the next internal thought as the prompt for the next iteration
         prompt = next_internal_thought
