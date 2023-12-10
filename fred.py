@@ -2,13 +2,17 @@
 # fred.py - "A Model for Consciousness"
 #
 # v1.1 - stub main loop, cort column classes
+# v1.2 - uses API instead of direct calls
 #
 import argparse
 from cortcolumns import *
+from utils import *
+from llm import *
 
 # Set up argument parsing
 parser = argparse.ArgumentParser(description="Run the simulation.")
 parser.add_argument("-n", type=int, default=-1, help="Number of iterations to run")
+parser.add_argument("-p", type=str, default="I'm bored.", help="Prompt to start with")
 args = parser.parse_args()
 
 def main():
@@ -17,14 +21,14 @@ def main():
     iteration_count = 0
 
     print("")
-    print("╭━━━╮╱╱╱╱╱╱╭╮")
-    print("┃╭━━╯╱╱╱╱╱╱┃┃")
-    print("┃╰━━┳━┳━━┳━╯┃")
-    print("┃╭━━┫╭┫┃━┫╭╮┃")
-    print("┃┃╱╱┃┃┃┃━┫╰╯┃")
-    print("╰╯╱╱╰╯╰━━┻━━╯")
+    print_bold_yellow("╭━━━╮╱╱╱╱╱╱╭╮")
+    print_bold_yellow("┃╭━━╯╱╱╱╱╱╱┃┃")
+    print_bold_yellow("┃╰━━┳━┳━━┳━╯┃")
+    print_bold_yellow("┃╭━━┫╭┫┃━┫╭╮┃")
+    print_bold_yellow("┃┃╱╱┃┃┃┃━┫╰╯┃")
+    print_bold_yellow("╰╯╱╱╰╯╰━━┻━━╯")
     print("")
-    print("11/2023 J LaCoursiere")
+    print_bold_yellow("11/2023 J LaCoursiere")
     print("")
 
     # Instantiate column classes
@@ -45,7 +49,8 @@ def main():
     llm = LLM()
 
     # Initial prompt
-    prompt = "Should we worry about AI?"
+    prompt = args.p
+    last_result = prompt
     print("I shall begin my journey considering: " + prompt)
 
     while alive:  # Forever loop?
@@ -70,15 +75,29 @@ def main():
         next_internal_thought = llm.summarize(columns_output)
 
         # Print the next internal thought (or pass it to a chat interface)
-        print("THOUGHT:" + next_internal_thought)
+        print_bold_yellow("THOUGHT:" + next_internal_thought)
 
-        # Set the next internal thought as the prompt for the next iteration
-        prompt = next_internal_thought
+        # is the current thought significantly different than the last thought?
+        # If so, we may be stuck on this thought and store it and move on to 
+        # something new.
+        prompt = "Given these two results, reply YES if they are substantially similar, otherwise reply NO:"
+        result1 = "1. " + last_result;
+        result2 = "2. " + next_internal_thought;
+        print("    BOOL: " + prompt)
+        if llm.bool(prompt+result1+result2, MODEL_TINY):
+            # XXX Store this thought as complete
+            prompt = "I will think about something randomly, vaguely related to " + next_internal_thought
+            print_bold_yellow("The summary is much the same as the last thought, time to move on. " + prompt)
+        else:
+            # Set the next internal thought as the prompt for the next iteration
+            prompt = next_internal_thought
 
         # if an iteration count was supplied (-n), stop when we reach it
         iteration_count += 1
         if 0 <= args.n == iteration_count:
             break
+
+        last_result = next_internal_thought
 
 if __name__ == "__main__":
     main()
